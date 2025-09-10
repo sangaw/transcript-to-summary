@@ -46,15 +46,21 @@ def preprocess_text(text: str) -> str:
 
 
 def summarize_text(text: str, sentences_count: int = 5, language: str = "english") -> str:
+    logger.info("Summarizing text with TextRank (sentences=%s, language=%s)", sentences_count, language)
     _ensure_punkt()
     processed_text = preprocess_text(text)
     if not processed_text:
+        logger.info("No content to summarize after preprocessing")
         return ""
     parser = PlaintextParser.from_string(processed_text, Tokenizer(language))
     summarizer = TextRankSummarizer()
     summarizer.stop_words = get_stop_words(language)
     summary_sentences: List[str] = [str(sentence) for sentence in summarizer(parser.document, max(1, sentences_count))]
-    return "\n".join(summary_sentences)
+    logger.info("Summarization complete: generated %s sentence(s)", len(summary_sentences))
+    summary_text = "\n".join(summary_sentences)
+    logger.info("Summary preview: %s", summary_text.replace("\n", " ")[:500])
+    logger.debug("Summary full text:\n%s", summary_text)
+    return summary_text
 
 
 def summarize_document(docx_path: str, sentences_count: int = 5, language: str = "english") -> str:
