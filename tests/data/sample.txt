@@ -1,0 +1,1 @@
+This is a sample transcript. It contains multiple sentences. The summarizer should pick the most relevant ones.
